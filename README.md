@@ -59,41 +59,6 @@ Ips_typographus_diapause_GWAS/
     └── TROUBLESHOOTING.md       # Common issues & solutions
 ```
 
-## Quick Start
-
-### 1. Clone & Setup
-
-```bash
-git clone https://github.com/YOUR_USERNAME/Ips_typographus_diapause_GWAS.git
-cd Ips_typographus_diapause_GWAS
-```
-
-### 2. Install Dependencies
-
-```bash
-# Create conda environment
-conda env create -f requirements/environment.yml
-conda activate ips_typographus
-
-# Install R packages
-Rscript requirements/r_packages.R
-
-# Install Python packages
-pip install -r requirements/requirements.txt
-```
-
-### 3. Execute Pipeline
-
-See `WORKFLOW.md` for step-by-step execution instructions.
-
-```bash
-# Typical execution order:
-# 1. bash scripts/01_assembly/ipyrad_assembly.sh
-# 2. bash scripts/02_variant_filtering/plink_pruning.sh
-# 3. Rscript scripts/03_population_genetics/VCA_analysis.R
-# ... (see WORKFLOW.md for complete order)
-```
-
 ## Key Results & Outputs
 
 ### Genome-Wide Association
