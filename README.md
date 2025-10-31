@@ -94,15 +94,11 @@ See `docs/SOFTWARE_VERSIONS.md` for complete version information. Core tools:
 Raw sequence data and phenotype data are available at [REPOSITORY/DATABASE]. 
 Analysis-ready VCF and intermediate files are provided in the `data/` directory.
 
-## Authors
+## Author
 
 **Luciano Palmieri**
 
 *Code revised with Claude Sonnet 4.5*
-
-## Contact
-
-For questions or issues, please open an issue on the GitHub repository.
 
 ## License
 
