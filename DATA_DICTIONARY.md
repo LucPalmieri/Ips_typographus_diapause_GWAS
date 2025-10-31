@@ -11,8 +11,6 @@ Complete specification of input and output files throughout the pipeline.
 | `raw_reads_*.fastq` | FASTQ | Demultiplexed or raw sequencing reads | Sample_001_R1.fastq |
 | `sorted_reads/*.fastq` | FASTQ | Pre-sorted reads by barcode | Sample_001.fastq |
 
-**Location**: Input path specified in ipyrad params file
-
 ---
 
 ### Reference Genome & Annotations
@@ -94,14 +92,6 @@ sample_004    1
 | `pruned_filtered75_Ips_ipyrad.recode.vcf` | VCF | Final pruned VCF | Downstream analyses |
 
 **Important**: `pruned_filtered75_Ips_ipyrad.recode.vcf` is the main output used for all downstream analyses.
-
-**Key Statistics** (from example):
-- Input variants: 16,587 (from ipyrad)
-- After missing data filter: ~14,000
-- After LD pruning: 11,867 variants
-- Samples: 574 individuals (297 phenotyped, 286 wild)
-- Genotyping rate: ~79.8%
-
 ---
 
 ### Stage 3: Population Genetics
@@ -116,7 +106,7 @@ sample_004    1
 **Format - VCA scores** (tab-separated):
 
 ```
-sample_id     PC1        PC2        PC3
+sample_id     VC1        VC2        VC3
 sample_001    0.1234     -0.0456    0.0078
 sample_002    0.1245     -0.0423    0.0089
 ```
@@ -131,34 +121,7 @@ sample_002   0.80      0.15      0.05
 
 ---
 
-### Stage 4: Genome Annotation
-
-| File | Format | Description | Purpose |
-|------|--------|-------------|---------|
-| `new_annotation.gff3` | GFF3 | Transferred genome annotation | Feature locations |
-| `new_annotation_features.txt` | TXT | Extracted genomic features | SNP mapping input |
-| `SNP_feature_overlaps_GWAS_moderateBF.tsv` | TSV | SNP-to-gene mapping results | Functional annotation |
-
-**Format - Feature file** (tab-separated):
-
-```
-chrom     start      end        feature      gene_id
-LG1       1000       1500       CDS          gene_001
-LG1       1500       1800       exon         gene_001
-LG1       2000       2100       5_UTR        gene_001
-```
-
-**Format - SNP-feature overlaps**:
-
-```
-seqnames    ranges        MRK         gene_id       feature      gene_id.1
-LG1         1234-1234     snp_001     gene_001      exon         gene_001
-LG2         5678-5678     snp_002     gene_002      CDS          gene_002
-```
-
----
-
-### Stage 5: GWAS (BayPass)
+### Stage 4: GWAS (BayPass)
 
 | File | Format | Description | Purpose |
 |------|--------|-------------|---------|
@@ -191,7 +154,7 @@ LG2      5678      snp_000002      7.2          0.40           0.65             
 
 ---
 
-### Stage 6: Machine Learning
+### Stage 5: Machine Learning
 
 | File | Format | Description | Purpose |
 |------|--------|-------------|---------|
@@ -239,7 +202,7 @@ Precision          0.82 ± 0.04
 
 ---
 
-### Stage 7: Functional Annotation
+### Stage 6: Functional Annotation
 
 | File | Format | Description | Purpose |
 |------|--------|-------------|---------|
@@ -289,7 +252,7 @@ GO:0003677      MF          DNA binding                   0.005      0.045
 
 ---
 
-### Stage 8: Wild Population Predictions
+### Stage 7: Wild Population Predictions
 
 | File | Format | Description | Purpose |
 |------|--------|-------------|---------|
@@ -328,73 +291,6 @@ LOW           MODERATE         55% facultative predicted
 HIGH          HIGH             62% facultative predicted
 NORTH         LOW              72% obligate predicted
 ```
-
----
-
-## Output Directory Structure
-
-```
-results/
-├── 01_assembly/
-│   ├── Ips_ipyrad.vcf
-│   └── stats/
-├── 02_filtering/
-│   ├── filtered75_Ips_ipyrad.recode.vcf
-│   ├── pruned_filtered75_Ips_ipyrad.*
-│   └── plink_report.log
-├── 03_population_genetics/
-│   ├── VCA_results.scores
-│   ├── STRUCTURE_run_*.q
-│   └── plots/
-│       └── STRUCTURE_barplot.pdf
-├── 04_annotation/
-│   ├── new_annotation.gff3
-│   ├── new_annotation_features.txt
-│   └── SNP_feature_overlaps_GWAS_moderateBF.tsv
-├── 05_gwas/
-│   ├── phenotyped.geno
-│   ├── baypass_results/
-│   │   ├── *_core_run*.txt
-│   │   └── *_importance_sampling*.txt
-│   ├── GWAS_moderateBF.txt
-│   └── gwas_summary.txt
-├── 06_machine_learning/
-│   ├── optuna_results/
-│   │   ├── best_params.json
-│   │   └── optimization_plots.html
-│   ├── GENOTYPE_PHENOTYPED_INTEGER.csv
-│   ├── SNP_importance_ranking.csv
-│   ├── cross_validation_metrics.txt
-│   └── model_predictions.csv
-├── 07_functional_annotation/
-│   ├── GO_foreground_genes.txt
-│   ├── GOseq_all_terms_modBF6.tsv
-│   ├── GOseq_significant_terms_modBF6.tsv
-│   └── enrichment_plots/
-├── 08_visualization/
-│   ├── manhattan_plot.pdf
-│   ├── covariance_heatmap.pdf
-│   └── structure_barplot.pdf
-└── 09_wild_predictions/
-    ├── wild_predictions.csv
-    ├── population_frequencies.txt
-    └── outbreak_risk_assessment.txt
-```
-
----
-
-## File Size Estimates
-
-| Type | Typical Size |
-|------|--------------|
-| Raw VCF (11,867 SNPs × 574 samples) | ~50-80 MB |
-| Pruned VCF | ~30-50 MB |
-| Encoded genotypes (CSV) | ~10-20 MB |
-| BayPass output (all runs) | ~100-200 MB |
-| GO enrichment results | <1 MB |
-| Final predictions | <1 MB |
-| **Total output** | ~200-500 MB |
-
 ---
 
 ## Important Notes
@@ -406,5 +302,3 @@ results/
 5. **Phenotype coding**: Consistent throughout (0=obligate, 1=facultative)
 
 ---
-
-For file-specific questions, see the corresponding stage README in `scripts/[stage]/README.md`
