@@ -5,6 +5,9 @@ This repository contains the complete bioinformatic pipeline for identifying gen
 ## Publication
 
 This work is part of a manuscript in preparation for submission to *Molecular Ecology*.
+For detailed methods, see the manuscript or `docs/METHODS_SUMMARY.md`.
+
+**Citation**: [Will be added upon publication]
 
 ## Overview
 
@@ -23,45 +26,6 @@ The pipeline processes ddRAD-seq data from three European populations of *I. typ
 - **Assembly method**: Reference-based ddRAD with ipyrad v0.9.95
 - **Final SNP set**: 11,867 variants after LD pruning
 - **Populations**: 3 geographic sites (LOW, HIGH, NORTH)
-
-## Workflow Overview
-
-```
-Raw fastq reads
-    ↓
-Demultiplexing & VCF filtering
-    ↓
-ipyrad reference-based assembly
-    ↓
-vcftools filtering (remove >25% missing)
-    ↓
-PLINK LD pruning
-    ↓
-┌─────────────────────────────────┬──────────────────────────────────┐
-│                                 │                                  │
-Population Structure Analysis    GWAS Analysis                    ML Classification
-│                                 │                                  │
-├─ VCA                            ├─ VCF → BayPass format          ├─ Genotype encoding
-├─ STRUCTURE                      ├─ BayPass core model            ├─ Optuna optimization
-│                                 ├─ Importance sampling           ├─ LightGBM training
-└─ Visualization                  ├─ Pseudo-observations           ├─ Cross-validation
-                                  └─ Bayes Factor ranking          └─ Feature ranking
-                                                                        
-                                  ↓
-                        Annotation & Interpretation
-                        
-                        ├─ Liftoff annotation transfer
-                        ├─ SNP → Gene mapping
-                        ├─ GO enrichment analysis
-                        └─ Functional characterization
-                        
-                                  ↓
-                        Wild Population Classification
-                        
-                        ├─ Predict phenotypes in wild individuals
-                        ├─ Estimate population-level frequencies
-                        └─ Assess outbreak risk
-```
 
 ## Directory Structure
 
@@ -160,15 +124,10 @@ See `docs/SOFTWARE_VERSIONS.md` for complete version information. Core tools:
 - **Machine Learning**: Python 3.9+, LightGBM v4.5.0, Optuna v4.2.0, scikit-learn v1.5.2
 - **Statistics & Visualization**: R 4.4.2, goseq v1.60.0, adegenet v1.3.1, rrBLUP v4.6.3
 
-## Methods & Citation
-
-For detailed methods, see the manuscript or `docs/METHODS_SUMMARY.md`.
-
-**Citation**: [Will be added upon publication]
-
 ## Data Availability
 
-Raw sequence data and phenotype data are available at [REPOSITORY/DATABASE]. Analysis-ready VCF and intermediate files are provided in the `data/` directory.
+Raw sequence data and phenotype data are available at [REPOSITORY/DATABASE]. 
+Analysis-ready VCF and intermediate files are provided in the `data/` directory.
 
 ## Authors
 
@@ -185,5 +144,3 @@ For questions or issues, please open an issue on the GitHub repository.
 This project is licensed under the MIT License - see LICENSE file for details.
 
 ---
-
-**Note**: This repository is a snapshot of the analysis performed for publication. For the latest updates and improvements, see the active development branch.
