@@ -270,7 +270,7 @@ sbatch baypass_core.sh
 # Runs three independent MCMC chains:
 # g_baypass -gfile phenotyped.geno \
 #   -seed [SEED] -npilot 20 -burnin 2500 \
-#   -outprefix phenotyped_core_run[1-3]
+#   -outprefix phenotyped_core_run[1-5]
 
 # Sets parameters:
 # - 20 pilot phases for adaptation
@@ -279,9 +279,9 @@ sbatch baypass_core.sh
 ```
 
 **Outputs** (per run):
-- `phenotyped_core_run[1-3]_summary_pi_xtx.txt` - XtX matrix
-- `phenotyped_core_run[1-3]_summary_fst.txt` - Fst values
-- `phenotyped_core_run[1-3]_pi_xtx_NOGT_ANC.txt` - Omega matrix
+- `phenotyped_core_run[1-5]_summary_pi_xtx.txt` - XtX matrix
+- `phenotyped_core_run[1-5]_summary_fst.txt` - Fst values
+- `phenotyped_core_run[1-5]_pi_xtx_NOGT_ANC.txt` - Omega matrix
 
 ### Step 5.3: Estimate Population Covariance Matrix
 
@@ -290,7 +290,7 @@ sbatch baypass_core.sh
 # Use run1 Omega as fixed parameter for downstream analyses
 
 # From output: Extract mean Omega across runs
-# Save as: contrast_PCA.txt (or similar for covariate model)
+# Save as: contrast_VCA.txt (or similar for covariate model)
 ```
 
 ### Step 5.4: BayPass Importance Sampling with VCA Covariate
@@ -310,6 +310,10 @@ sbatch baypass_is.sh
 
 **Key Outputs**:
 - `phenotyped_importance_sampling_cov_run1_summary_betai_fst.txt` - Bayes Factors
+- `phenotyped_importance_sampling_cov_run2_summary_betai_fst.txt` - Bayes Factors
+- `phenotyped_importance_sampling_cov_run3_summary_betai_fst.txt` - Bayes Factors
+- `phenotyped_importance_sampling_cov_run4_summary_betai_fst.txt` - Bayes Factors
+- `phenotyped_importance_sampling_cov_run5_summary_betai_fst.txt` - Bayes Factors
 
 ### Step 5.5: Extract & Rank SNP Associations
 
@@ -392,8 +396,6 @@ python lightgbm_OPTUNA_improved.py \
 # 2. 50-fold cross-validation per trial
 # 3. AUROC as optimization metric
 # 4. Saves best hyperparameters
-
-# Runtime: Typically 2-4 hours
 ```
 
 **Outputs**:
@@ -658,50 +660,6 @@ Rscript STRUCTURE_plot.R \
 ✓ wild_predictions.csv                          # Wild phenotypes
 ```
 
-### Files Safe to Delete After Analysis
-
-```
-# Intermediate files that can be re-generated:
-- Optuna optimization trial history
-- Individual PLINK intermediate files
-- Temporary model training checkpoints
-- Unused VCF format conversions
-```
-
----
-
-## Troubleshooting & Common Issues
-
-See `docs/TROUBLESHOOTING.md` for solutions to:
-- Memory/resource errors on HPC
-- Missing genome reference sequences
-- VCF format incompatibilities
-- Python/R package version conflicts
-- LightGBM training convergence issues
-
----
-
-## Expected Runtime
-
-Approximate computational time (will vary by hardware):
-
-| Stage | Process | Time |
-|-------|---------|------|
-| 0 | VCF filtering | 1-2 hours |
-| 1 | ipyrad assembly | 4-8 hours |
-| 2 | Filtering & pruning | 30 min - 1 hour |
-| 3 | VCA & STRUCTURE | 1-2 hours |
-| 4 | Annotation & mapping | 30 min - 1 hour |
-| 5 | BayPass GWAS | 3-6 hours |
-| 6 | ML hyperopt (Optuna) | 2-4 hours |
-| 6 | Model training | 30 min - 1 hour |
-| 7 | GO enrichment | 15-30 min |
-| 8 | Wild classification | 5-10 min |
-| 9 | Visualization | 30 min - 1 hour |
-| **TOTAL** | **Full pipeline** | **~2 days** |
-
----
-
 ## Next Steps After Analysis
 
 1. **Validate findings**: Compare GWAS and ML SNP rankings
@@ -711,5 +669,3 @@ Approximate computational time (will vary by hardware):
 5. **Manuscript preparation**: Generate figures from Stage 9 outputs
 
 ---
-
-For detailed methods, see the manuscript or `docs/METHODS_SUMMARY.md`.
