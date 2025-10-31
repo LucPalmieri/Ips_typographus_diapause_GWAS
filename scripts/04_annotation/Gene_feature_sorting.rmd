@@ -1,0 +1,32 @@
+# Gene feature sorting
+
+## This script finds overlaps between SNPs and genomic features using GenomicRanges.
+## It reads SNPs and features from text files, creates GRanges objects, and identifies overlaps.
+
+library(GenomicRanges)
+
+# Load tables
+# snps <- read.table("ML_annot_diffzero.txt", header=TRUE, sep="\t") #< snps of machine learning classificatio analysis
+snps <- read.table("GWAS_moderateBF.txt", header=TRUE, sep="\t") #< snps of GWAS analysis
+features <- read.table("liftoff_features.txt", header=TRUE, sep="\t")
+
+# Create GRanges
+snp_gr <- GRanges(seqnames=snps$SNP_chr,
+                  ranges=IRanges(start=snps$SNP_pos, end=snps$SNP_pos),
+                  MRK=snps$MRK, gene_id=snps$gene_id)
+
+feature_gr <- GRanges(seqnames=features$chrom,
+                      ranges=IRanges(start=features$start, end=features$end),
+                      feature=features$feature, gene_id=features$gene_id)
+
+# Find overlaps
+hits <- findOverlaps(snp_gr, feature_gr)
+overlaps <- cbind(as.data.frame(snp_gr[queryHits(hits)]),
+                  as.data.frame(feature_gr[subjectHits(hits)]))
+
+# Write overlaps to a tab-separated file
+write.table(overlaps,
+            file = "SNP_feature_overlaps_GWAS_moderateBF.tsv",
+            sep = "\t",
+            quote = FALSE,
+            row.names = FALSE)

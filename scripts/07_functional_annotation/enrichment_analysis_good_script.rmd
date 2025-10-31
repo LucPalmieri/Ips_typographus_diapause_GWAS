@@ -1,0 +1,50 @@
+library(goseq)
+
+# 1. Read foreground table
+fg <- read.delim("foreground_mod_BF6.txt", stringsAsFactors=FALSE) #for Baypass BF>6 SNPs
+# fg <- read.delim("foreground_pos_ML.txt", stringsAsFactors=FALSE) #for machine learning SNPs
+
+# 2. Deduplicate just in case
+fg <- fg[!duplicated(fg$gene_id), ]
+
+# 3. Read background (bias) data
+len <- read.delim("gene_length.txt", stringsAsFactors=FALSE)
+bg_genes <- len$gene_id
+
+# 4. Build named bias vector
+bias_vec <- len$length
+names(bias_vec) <- bg_genes
+
+# 5. Initialize DE vector of zeros
+de_vec <- integer(length(bg_genes))
+names(de_vec) <- bg_genes
+
+# 6. Fill in your isDE flags where gene_id matches bg_genes
+matches <- match(fg$gene_id, bg_genes)      # gives positions in bg_genes
+valid  <- !is.na(matches)
+de_vec[matches[valid]] <- fg$isDE[valid]
+
+# 7. Check that de_vec is correctly filled
+# Read and build gene2cat
+g2g <- read.delim("Gene2GO.txt", stringsAsFactors = FALSE)
+stopifnot(all(c("gene_id", "GO_term") %in% names(g2g)))
+gene2cat <- split(g2g$GO_term, g2g$gene_id)
+
+
+# 8. Now run GOseq
+pwf <- nullp(DEgenes   = de_vec,
+             bias.data = bias_vec,
+             plot.fit  = FALSE)
+GO.res <- goseq(pwf,
+                gene2cat = gene2cat,
+                method   = "Wallenius")
+
+# 9. Export
+write.table(GO.res, "GOseq_all_terms_modBF6.tsv", sep="\t", quote=FALSE, row.names=FALSE)
+sig <- subset(GO.res, over_represented_pvalue < 0.05)
+write.table(sig,   "GOseq_significant_terms_modBF6.tsv", sep="\t", quote=FALSE, row.names=FALSE)
+
+# 8. Summary
+cat("Foreground genes (isDE=1):", sum(de_vec == 1),      "\n")
+cat("GO terms tested:",        nrow(GO.res),             "\n")
+cat("Significant terms:",      nrow(sig),                "\n")
